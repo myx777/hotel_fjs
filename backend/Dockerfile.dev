@@ -1,9 +1,8 @@
-FROM node:22.12-alpine
+FROM node:22.12
 
 WORKDIR /backend
 
+ARG NODE_ENV=development
 COPY package*.json ./
 RUN npm install
 COPY . .
-
-CMD [ "npm", "start", "dev" ]

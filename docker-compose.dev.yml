@@ -11,7 +11,24 @@ services:
       - ./frontend:/frontend
       - /frontend/node_modules
     ports:
-      - "80:5173" 
+      - 80:5173
+    command: npm run dev
+
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./backend:/backend
+      - /backend/node_modules
+    ports:
+      - 3000:3000
+    depends_on:
+      - mongo
+    environment:
+      MONGO_URL: mongodb://root:example@mongo:27017/
+    command: npm run start:dev
+
 
   mongo:
     image: mongo
@@ -19,6 +36,8 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - mongo-data:/data/db
 
   mongo-express:
     image: mongo-express
@@ -30,3 +49,7 @@ services:
       ME_CONFIG_MONGODB_ADMINPASSWORD: example
       ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
       ME_CONFIG_BASICAUTH: false
+
+volumes:
+  mongo-data:
+    driver: local
