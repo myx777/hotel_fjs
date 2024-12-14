@@ -1,0 +1,9 @@
+FROM node:22.12-alpine
+
+WORKDIR /backend
+
+COPY package*.json ./
+RUN npm install
+COPY . .
+
+CMD [ "npm", "start", "dev" ]
