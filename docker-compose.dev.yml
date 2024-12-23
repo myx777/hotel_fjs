@@ -1,23 +1,35 @@
 # Use root/example as user/password credentials
 #version: "3.9"
-
 services:
 
-  frontend:
-    container_name: hotel-frontend
+  mongo:
+    image: mongo:latest
     restart: always
-    build: 
-      context: ./frontend
-      dockerfile:  Dockerfile.dev
-    volumes: 
-      - ./frontend:/frontend
-      - /frontend/node_modules
+    container_name: mongodb-dev
+    ports: 
+      - ${MONGO_PORT}:27017
+    volumes:
+      - ./data-base-hotel:/data/db
+    logging:
+      options:
+        max-size: 1g
+        max-file: 5
+
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongo-express-dev
+    restart: always
     ports:
-      - ${FRONTEND_PORT}:5173
-    command: npm run dev
+      - ${MONGO_EXPRESS_PORT}:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_ROOT_USER}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_ROOT_PASSWORD}
+      ME_CONFIG_MONGODB_SERVER: mongodb-dev
+      ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_EXPRESS_LOGIN}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_EXPRESS_PASSWORD}
 
   backend:
-    container_name: hotel-backend
+    container_name: hotel-backend-dev
     restart: always
     build: 
       context: ./backend
@@ -33,30 +45,18 @@ services:
       ME_CONFIG_MONGODB_SERVER: mongodb
     command: npm run start:dev
 
-  mongo:
-    image: mongo:latest
+  frontend:
+    container_name: hotel-frontend-dev
     restart: always
-    container_name: mongodb
-    ports: 
-      - ${MONGO_PORT}:27017
-    volumes:
-      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
-      - ./data-base-hotel:/data/db
-    logging:
-      options:
-        max-size: 1g
-
-  mongo-express:
-    image: mongo-express:latest
-    container_name: mongo-express
-    restart: always
+    build: 
+      context: ./frontend
+      dockerfile:  Dockerfile.dev
+    volumes: 
+      - ./frontend:/frontend
+      - /frontend/node_modules
     ports:
-      - ${MONGO_EXPRESS_PORT}:8081
-    environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_ROOT_USER}
-      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_ROOT_PASSWORD}
-      ME_CONFIG_MONGODB_SERVER: mongodb
-      ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_EXPRESS_LOGIN}
-      ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_EXPRESS_PASSWORD}
+      - ${FRONTEND_PORT}:5173
+    command: npm run dev
+
 volumes:
   data-base: {}
