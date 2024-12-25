@@ -18,17 +18,23 @@ done
 # Сообщение о завершении инициализации
 echo "MongoDB is initialized!"
 
-# Выполнение скрипта mongo-init.js
-echo "Starting script: mongo-init.js"
-docker exec -i mongodb-dev mongosh < ./mongo-init.js
+# Удалить скрипт из контейнера MongoDB
+echo "Removing mongo-init.js from /docker-entrypoint-initdb.d/ in the container..."
+docker exec mongodb-dev rm -f /docker-entrypoint-initdb.d/mongo-init.js
 
-# Удалить mongo-init.js из контейнера MongoDB
-#echo "Removing mongo-init.js, .env from container..."
-#rm -f ./mongo-init.js ./.env && echo "mongo-init.js, .env removed successfully."
+# Проверить, удалён ли файл (необязательно)
+echo "Checking if the file is removed..."
+docker exec mongodb-dev ls /docker-entrypoint-initdb.d/
 
-#echo "Please wait 10 sec."
-#sleep 10
+# Сообщение об успешном завершении
+echo "Initialization script removed successfully!"
 
-# Показать последние 50 строк логов всех контейнеров
-#echo "Displaying the last 100 lines of logs:"
-#docker compose -f docker-compose.dev.yml -p hotel logs --tail 100
+# Перезапуск контейнера MongoDB
+echo "restart mongo"
+docker restart mongodb-dev
+
+# Показать последние 10 строк логов всех контейнеров
+docker compose -f docker-compose.dev.yml -p hotel logs mongodb-dev --tail 10
+docker compose -f docker-compose.dev.yml -p hotel logs frontend-dev --tail 10
+docker compose -f docker-compose.dev.yml -p hotel logs backend-dev --tail 10
+docker compose -f docker-compose.dev.yml -p hotel logs mongo-express-dev --tail 10

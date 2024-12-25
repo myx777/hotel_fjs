@@ -4,14 +4,19 @@
 /**
  * Инициализация БД Mongo
  */
-db = db.getSiblingDB("admin");
+// db = db.getSiblingDB("admin");
 
 // Создание root пользователя
-db.createUser({
-  user: "mongo",
-  pwd: "mongo", 
-  roles: [{ role: "root", db: "admin" }],
-});
+// db.createUser({
+//   user: "mongo",
+//   pwd: "mongo", 
+//   roles: [{ role: "root", db: "admin" }],
+// });
+
+// Подключение к базе admin с авторизацией
+// db = connect( 'mongodb://localhost/admin' );
+// db = db.getSiblingDB("admin");
+// db.auth("mongo", "mongo");
 
 // Переключение на базу данных hotels-db
 db = db.getSiblingDB("hotels-db");

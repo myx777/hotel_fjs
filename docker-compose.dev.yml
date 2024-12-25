@@ -9,11 +9,16 @@ services:
     ports: 
       - ${MONGO_PORT}:27017
     volumes:
+      - ./init-scripts:/docker-entrypoint-initdb.d:ro
       - ./data-base-hotel:/data/db
     logging:
       options:
         max-size: 1g
         max-file: 5
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+    command: ["mongod", "--auth"]
 
   mongo-express:
     image: mongo-express:latest
