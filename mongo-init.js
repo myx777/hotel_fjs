@@ -1,28 +1,9 @@
-/**
- * Инициализация БД Mongo
- */
-/**
- * Инициализация БД Mongo
- */
-// db = db.getSiblingDB("admin");
-
-// Создание root пользователя
-// db.createUser({
-//   user: "mongo",
-//   pwd: "mongo", 
-//   roles: [{ role: "root", db: "admin" }],
-// });
-
-// Подключение к базе admin с авторизацией
-// db = connect( 'mongodb://localhost/admin' );
-// db = db.getSiblingDB("admin");
-// db.auth("mongo", "mongo");
-
+// db = connect("localhost:27017", "mongo", "mongo")
 // Переключение на базу данных hotels-db
 db = db.getSiblingDB("hotels-db");
 
 // Создание коллекций
-if (!db.getCollectionNames().includes("hotels") && !db.getCollectionNames().includes("users")) {
+// if (!db.getCollectionNames().includes("hotels") && !db.getCollectionNames().includes("users")) {
   db.createCollection("hotels");
   db.createCollection("users");
 
@@ -40,8 +21,8 @@ if (!db.getCollectionNames().includes("hotels") && !db.getCollectionNames().incl
 
   // Пользователь с правами на запись в hotels
   db.createUser({
-    user: "user",
-    pwd: "pwd",
+    user: "__MONGO_HOTELS_WRITE_USER__",
+    pwd: "__MONGO_HOTELS_WRITE_PASSWORD__",
     roles: [{ role: "writeHotelsOnly", db: "hotels-db" }],
   });
 
@@ -59,8 +40,8 @@ if (!db.getCollectionNames().includes("hotels") && !db.getCollectionNames().incl
 
   // Пользователь с правами на чтение hotels
   db.createUser({
-    user: "user1",
-    pwd: "pwd1",
+    user: "__MONGO_HOTELS_READ_USER__",
+    pwd: " __MONGO_HOTELS_READ_PASSWORD__",
     roles: [{ role: "readHotelsOnly", db: "hotels-db" }],
   });
 
@@ -78,8 +59,8 @@ if (!db.getCollectionNames().includes("hotels") && !db.getCollectionNames().incl
 
   // Пользователь с правами на запись в users
   db.createUser({
-    user: "user2",
-    pwd: "pwd2",
+    user: "__MONGO_USERS_WRITE_USER__",
+    pwd: "__MONGO_USERS_WRITE_PASSWORD__",
     roles: [{ role: "writeUsersOnly", db: "hotels-db" }],
   });
 
@@ -97,8 +78,8 @@ if (!db.getCollectionNames().includes("hotels") && !db.getCollectionNames().incl
 
   // Пользователь с правами на чтение users
   db.createUser({
-    user: "user3",
-    pwd: "pwd3",
+    user: "__MONGO_USERS_READ_USER__",
+    pwd: "__MONGO_USERS_READ_PASSWORD__",
     roles: [{ role: "readUsersOnly", db: "hotels-db" }],
   });
-}
+// }
