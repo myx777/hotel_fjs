@@ -1,1 +1,0 @@
-db.createRole({ role: "readUsersOnly", privileges: [ { resource: { db: "hotels-db", collection: "users" }, actions: ["find"] }], roles: [] });roles: [] }););
