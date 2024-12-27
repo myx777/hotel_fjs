@@ -1,4 +1,6 @@
-// db = connect("localhost:27017", "mongo", "mongo")
+db = db.getSiblingDB("admin");
+db.auth("mongo", "mongo");
+
 // Переключение на базу данных hotels-db
 db = db.getSiblingDB("hotels-db");
 
@@ -41,7 +43,7 @@ db = db.getSiblingDB("hotels-db");
   // Пользователь с правами на чтение hotels
   db.createUser({
     user: "__MONGO_HOTELS_READ_USER__",
-    pwd: " __MONGO_HOTELS_READ_PASSWORD__",
+    pwd: "__MONGO_HOTELS_READ_PASSWORD__",
     roles: [{ role: "readHotelsOnly", db: "hotels-db" }],
   });
 

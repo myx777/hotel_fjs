@@ -8,6 +8,9 @@ import { DatabaseService } from './database.service';
 
 @Module({
   imports: [ConfigModule.forRoot(), MongooseModule.forRoot(process.env.MONGO_URL, {
+    user: process.env.MONGO_ROOT_USER,
+    pass: process.env.MONGO_ROOT_PASSWORD,
+    authSource: 'admin',
     connectionFactory: (connection) => {
       connection.on('connected', () => {
         console.log(`✅ Connected to MongoDB: ${connection.db.databaseName}`);
@@ -20,7 +23,8 @@ import { DatabaseService } from './database.service';
       });
       return connection;
     },
-  }),],
+  }),
+  ],
   controllers: [AppController],
   providers: [AppService, DatabaseService],
 })
