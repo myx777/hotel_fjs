@@ -8,10 +8,20 @@ import { DatabaseService } from './database.service';
 
 @Module({
   imports: [ConfigModule.forRoot(), MongooseModule.forRoot(process.env.MONGO_URL, {
-    user: process.env.MONGO_ROOT_USER,
-    pass: process.env.MONGO_ROOT_PASSWORD,
-    authSource: 'admin',
+    user: process.env.MONGO_HOTELS_WRITE_USER,
+    pass: process.env.MONGO_HOTELS_WRITE_PASSWORD,
+    authSource: 'hotels-db',
     connectionFactory: (connection) => {
+      console.log(`Database selected: ${connection.db.databaseName}`);
+      
+      // Проверяем состояние соединения
+      if (connection.readyState === 1) {
+        console.log(`✅ Connected to MongoDB: ${connection.db.databaseName}`);
+      } else {
+        console.warn('⚠️ MongoDB connection is not ready');
+      }
+    
+      // Подписываемся на события
       connection.on('connected', () => {
         console.log(`✅ Connected to MongoDB: ${connection.db.databaseName}`);
       });
@@ -21,8 +31,9 @@ import { DatabaseService } from './database.service';
       connection.on('disconnected', () => {
         console.warn('⚠️ MongoDB disconnected');
       });
+    
       return connection;
-    },
+    },    
   }),
   ],
   controllers: [AppController],

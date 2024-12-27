@@ -1,6 +1,9 @@
 db = db.getSiblingDB("admin");
-db.auth("mongo", "mongo");
-
+db.auth("__MONGO_ROOT_USER__", "__MONGO_ROOT_PASSWORD__");
+db.runCommand({
+  revokeRolesFromUser: "__MONGO_ROOT_USER__",
+  roles: [{ role: "readWrite", db: "test" }]
+});
 // Переключение на базу данных hotels-db
 db = db.getSiblingDB("hotels-db");
 
@@ -85,3 +88,5 @@ db = db.getSiblingDB("hotels-db");
     roles: [{ role: "readUsersOnly", db: "hotels-db" }],
   });
 // }
+// хз, удаляю тест базу, чтобы супостат не смог зайти
+db.getSiblingDB('test').dropDatabase()

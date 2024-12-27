@@ -52,8 +52,8 @@ services:
       - /backend/node_modules
     ports:
       - 3000:${BACKEND_PORT}
-    environment:
-      MONGODB_URL: mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongo:${MONGO_PORT}/admin?authSource=admin
+    #environment:
+      #MONGODB_URL: mongodb://${MONGO_ROOT_USER}:${MONGO_ROOT_PASSWORD}@mongo:${MONGO_PORT}/admin?authSource=admin
     depends_on:
       - mongo
     command: npm run start:dev

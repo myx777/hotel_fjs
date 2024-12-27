@@ -1,4 +1,7 @@
 #!/bin/bash
+#! останавливаю и убиваю все запущенные контейнеры и удаляю локальную бд
+docker stop $(docker ps -a -q)
+docker rm $(docker ps -a -q)
 rm -rf data-base-hotel
 # Запуск Docker Compose
 docker compose -f docker-compose.dev.yml -p hotel up -d
@@ -9,7 +12,7 @@ if ! docker ps -a --format '{{.Names}}' | grep -q "^mongodb-dev$"; then
     exit 1
 fi
 
-# Дождаться инициализации MongoDB
+# Дождаться инициализации MongoDB на основе пинга
 echo "Waiting for MongoDB to finish initialization..."
 sleep 5
 MAX_RETRIES=60  # Таймаут: 60 попыток
@@ -51,13 +54,12 @@ if [ ! -f mongo-init.js ]; then
     exit 1
 fi
 
-# хз, удаляю тест базу, чтобы супостат не смог зайти
-docker exec -it mongodb-dev mongosh --quiet --eval "db.getSiblingDB('test').dropDatabase()"
-
 # Обработка файла mongo-init.js и подстановка паролей и юзеров из .env
 echo "Processing mongo-init.js with environment variables..."
 TEMP_FILE=$(mktemp)
-sed -e "s/__MONGO_HOTELS_WRITE_USER__/${MONGO_HOTELS_WRITE_USER}/g" \
+sed -e "s/__MONGO_ROOT_USER__/${MONGO_ROOT_USER}/g" \
+    -e "s/__MONGO_ROOT_PASSWORD__/${MONGO_ROOT_PASSWORD}/g" \
+    -e "s/__MONGO_HOTELS_WRITE_USER__/${MONGO_HOTELS_WRITE_USER}/g" \
     -e "s/__MONGO_HOTELS_WRITE_PASSWORD__/${MONGO_HOTELS_WRITE_PASSWORD}/g" \
     -e "s/__MONGO_HOTELS_READ_USER__/${MONGO_HOTELS_READ_USER}/g" \
     -e "s/__MONGO_HOTELS_READ_PASSWORD__/${MONGO_HOTELS_READ_PASSWORD}/g" \
@@ -71,6 +73,9 @@ sed -e "s/__MONGO_HOTELS_WRITE_USER__/${MONGO_HOTELS_WRITE_USER}/g" \
 echo "Executing mongo-init-processed.js..."
 docker exec -i mongodb-dev mongosh < mongo-init-processed.js
 
+# хз, удаляю тест базу, чтобы супостат не смог зайти
+#docker exec -it mongodb-dev mongosh --quiet --eval "db.getSiblingDB('test').dropDatabase()"
+
 # Удаляем временный файл
 echo "Removing processed temporary file..."
 rm -f mongo-init-processed.js
@@ -78,13 +83,13 @@ rm -f mongo-init-processed.js
 # Рестарт MongoDB
 echo "Restarting MongoDB..."
 #docker restart hotel-backend-dev
-docker restart mongodb-dev
+#docker restart mongodb-dev
 
 # Таймер, если существует скрипт, то запуск (нужно чтобы бек успел поключиться к монго)
 #if [ -f timer.sh ]; then
    #./timer.sh
 #fi
-
+sleep 10
 # Вывод логов с разделителями
 echo "================ BACKEND LOGS ================"
 docker logs hotel-backend-dev | head -n 20 || echo "Error fetching logs for MongoDB."
