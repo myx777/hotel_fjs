@@ -1,92 +1,37 @@
 db = db.getSiblingDB("admin");
-db.auth("__MONGO_ROOT_USER__", "__MONGO_ROOT_PASSWORD__");
-db.runCommand({
-  revokeRolesFromUser: "__MONGO_ROOT_USER__",
-  roles: [{ role: "readWrite", db: "test" }]
+db.createUser({
+  user: "__MONGO_ROOT_USER__",
+  pwd: "__MONGO_ROOT_PASSWORD__",
+  roles: [{ role: "root", db: "admin" }],
 });
+
+db.auth("__MONGO_ROOT_USER__", "__MONGO_ROOT_PASSWORD__");
+
 // Переключение на базу данных hotels-db
 db = db.getSiblingDB("hotels-db");
 
 // Создание коллекций
-// if (!db.getCollectionNames().includes("hotels") && !db.getCollectionNames().includes("users")) {
-  db.createCollection("hotels");
-  db.createCollection("users");
+db.createCollection("hotels");
+db.createCollection("users");
 
-  // Роль: Запись только в коллекцию hotels
-  db.createRole({
-    role: "writeHotelsOnly",
+// Роль для сервера
+db.createRole(
+  {
+    role: "hotels-db",
     privileges: [
       {
-        resource: { db: "hotels-db", collection: "hotels" },
-        actions: ["insert", "update"],
+        resource: { db: "hotels-db", collection: "" },
+        actions: ["insert", "update", "find", "remove"],
       },
     ],
     roles: [],
-  });
+  },
+  { w: "majority", wtimeout: 5000 }
+);
 
-  // Пользователь с правами на запись в hotels
-  db.createUser({
-    user: "__MONGO_HOTELS_WRITE_USER__",
-    pwd: "__MONGO_HOTELS_WRITE_PASSWORD__",
-    roles: [{ role: "writeHotelsOnly", db: "hotels-db" }],
-  });
-
-  // Роль: Чтение только из коллекции hotels
-  db.createRole({
-    role: "readHotelsOnly",
-    privileges: [
-      {
-        resource: { db: "hotels-db", collection: "hotels" },
-        actions: ["find"],
-      },
-    ],
-    roles: [],
-  });
-
-  // Пользователь с правами на чтение hotels
-  db.createUser({
-    user: "__MONGO_HOTELS_READ_USER__",
-    pwd: "__MONGO_HOTELS_READ_PASSWORD__",
-    roles: [{ role: "readHotelsOnly", db: "hotels-db" }],
-  });
-
-  // Роль: Запись только в коллекцию users
-  db.createRole({
-    role: "writeUsersOnly",
-    privileges: [
-      {
-        resource: { db: "hotels-db", collection: "users" },
-        actions: ["insert", "update"],
-      },
-    ],
-    roles: [],
-  });
-
-  // Пользователь с правами на запись в users
-  db.createUser({
-    user: "__MONGO_USERS_WRITE_USER__",
-    pwd: "__MONGO_USERS_WRITE_PASSWORD__",
-    roles: [{ role: "writeUsersOnly", db: "hotels-db" }],
-  });
-
-  // Роль: Чтение только из коллекции users
-  db.createRole({
-    role: "readUsersOnly",
-    privileges: [
-      {
-        resource: { db: "hotels-db", collection: "users" },
-        actions: ["find"],
-      },
-    ],
-    roles: [],
-  });
-
-  // Пользователь с правами на чтение users
-  db.createUser({
-    user: "__MONGO_USERS_READ_USER__",
-    pwd: "__MONGO_USERS_READ_PASSWORD__",
-    roles: [{ role: "readUsersOnly", db: "hotels-db" }],
-  });
-// }
-// хз, удаляю тест базу, чтобы супостат не смог зайти
-db.getSiblingDB('test').dropDatabase()
+// Пользователь с правами на запись в hotels
+db.createUser({
+  user: "__MONGO_HOTELS_USER__",
+  pwd: "__MONGO_HOTELS_PASSWORD__",
+  roles: [{ role: "hotels-db", db: "hotels-db" }],
+});
