@@ -1,7 +1,7 @@
 ```
-chmod +x start.sh
+chmod +x dev.sh
 ```
 
 ```
-./start.sh
+./dev.sh
 ```
