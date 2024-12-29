@@ -1,10 +1,9 @@
 #!/bin/bash
 
-#! останавливаю и убиваю все запущенные контейнеры и удаляю локальную бд
+# Останавливаю и удаляю контейнеры
 docker stop $(docker ps -a -q)
 docker rm $(docker ps -a -q)
 rm -rf data-base-hotel
-#! убери
 
 # Запуск Docker Compose
 docker compose -f docker-compose.dev.yaml -p hotel up -d
@@ -15,12 +14,11 @@ if ! docker ps -a --format '{{.Names}}' | grep -q "^mongodb$"; then
     exit 1
 fi
 
-# Дождаться инициализации MongoDB на основе пинга
+# Ожидание инициализации MongoDB
 echo "Waiting for MongoDB to finish initialization..."
-
-MAX_RETRIES=60  # Таймаут: 60 попыток
+MAX_RETRIES=60
 RETRY_COUNT=0
-DELAY=5  # Интервал ожидания между проверками (в секундах)
+DELAY=5
 
 while ! docker exec mongodb mongosh --quiet --eval "db.adminCommand('ping')" >/dev/null 2>&1; do
     if [ "$RETRY_COUNT" -ge "$MAX_RETRIES" ]; then
@@ -45,58 +43,57 @@ set -o allexport
 source .env
 set +o allexport
 
-# Проверяем наличие всех переменных
-if [ -z "$MONGO_ROOT_USER" ] || [ -z "$MONGO_ROOT_PASSWORD" ] || [ -z "$MONGO_HOTELS_USER" ] || [ -z "$MONGO_HOTELS_PASSWORD" ]; then
+# Проверяем наличие всех необходимых переменных
+if [ -z "$MONGO_ROOT_USER" ] || [ -z "$MONGO_ROOT_PASSWORD" ] || [ -z "$MONGO_DB_USER" ] || [ -z "$MONGO_DB_PASSWORD" ]; then
     echo "Error: One or more required environment variables are missing. Check your .env file."
     exit 1
 fi
 
 # Проверяем наличие файла mongo-init.js
-if [ ! -f mongo-init.js ]; then
+if [ ! -f ./mongo-init/mongo-init.js ]; then
     echo "Error: mongo-init.js file not found."
     exit 1
 fi
 
-# Обработка файла mongo-init.js и подстановка паролей и юзеров из .env
+# Обработка файла mongo-init.js с подстановкой переменных
 echo "Processing mongo-init.js with environment variables..."
 TEMP_FILE=$(mktemp)
 sed -e "s/__MONGO_ROOT_USER__/${MONGO_ROOT_USER}/g" \
     -e "s/__MONGO_ROOT_PASSWORD__/${MONGO_ROOT_PASSWORD}/g" \
-    -e "s/__MONGO_HOTELS_USER__/${MONGO_HOTELS_USER}/g" \
-    -e "s/__MONGO_HOTELS_PASSWORD__/${MONGO_HOTELS_PASSWORD}/g" \
-    mongo-init.js > mongo-init-processed.js
+    -e "s/__MONGO_DB_USER__/${MONGO_DB_USER}/g" \
+    -e "s/__MONGO_DB_PASSWORD__/${MONGO_DB_PASSWORD}/g" \
+    ./mongo-init/mongo-init.js > ${TEMP_FILE}
 
 # Выполняем скрипт в MongoDB
-echo "Executing mongo-init-processed.js..."
-docker exec -i mongodb mongosh < mongo-init-processed.js
-
-# хз, удаляю тест базу, чтобы супостат не смог зайти
-#docker exec -it mongodb-dev mongosh --quiet --eval "db.getSiblingDB('test').dropDatabase()"
+echo "Executing processed mongo-init.js..."
+docker exec -i mongodb mongosh < ${TEMP_FILE}
 
 # Удаляем временный файл
+rm -f ${TEMP_FILE} 
+
+# Удаляем временный файл после успешного выполнения
 echo "Removing processed temporary file..."
-rm -f mongo-init-processed.js
+rm -f ${TEMP_FILE}
 
-# Таймер, если существует скрипт, то запуск (нужно чтобы бек успел поключиться к монго)
-#if [ -f timer.sh ]; then
-   #./timer.sh
-#fi
+# Таймер, чтобы другие сервисы успели подключиться
+sleep 15
 
-sleep 10
-# Вывод логов с разделителями
+# Вывод логов
 echo "================ BACKEND LOGS ================"
-docker logs server | head -n 20 || echo "Error fetching logs for MongoDB."
+docker logs server-hotel | head -n 5 || echo "Error fetching logs for server."
 echo "=============================================="
 
 echo "================ FRONTEND LOGS ================"
-docker logs client | head -n 20 || echo "Error fetching logs for MongoDB."
+docker logs client-hotel | head -n 5 || echo "Error fetching logs for client."
 echo "=============================================="
 
 echo "================ MONGODB LOGS ================="
-docker logs mongodb | head -n 6 || echo "Error fetching logs for MongoDB."
+docker logs mongodb | head -n 1 || echo "Error fetching logs for MongoDB."
 echo "=============================================="
 
-# Завершение скрипта
-echo "Initialization completed successfully!"
+echo "================ NGINX LOGS =================="
+docker logs nginx-hotel | head -n 1 || echo "Error fetching logs for nginx."
+echo "=============================================="
 
-# ToDo: добавь cron для бекапа mongo
+# Завершение
+echo "You are very cool!"

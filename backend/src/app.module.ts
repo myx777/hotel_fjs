@@ -9,7 +9,7 @@ import { DatabaseService } from './database.service';
   imports: [
     ConfigModule.forRoot(),
     MongooseModule.forRoot(
-      `mongodb://mongo:${process.env.MONGO_PORT}/hotels-db`,
+      `mongodb://mongo:27017/${process.env.MONGO_DB_NAME}`,
       {
         user: process.env.MONGO_HOTELS_WRITE_USER,
         pass: process.env.MONGO_HOTELS_WRITE_PASSWORD,

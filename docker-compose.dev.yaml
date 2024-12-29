@@ -4,8 +4,6 @@ services:
     image: mongo:latest
     restart: always
     container_name: mongodb
-    ports: 
-      - 27017:${MONGO_PORT}
     logging:
       options:
         max-size: 1g
@@ -19,43 +17,51 @@ services:
     container_name: mongo-express
     restart: always
     ports:
-      - 8081:${MONGO_EXPRESS_PORT}
+      - ${MONGO_EXPRESS_PORT}:8081
     environment:
-      ME_CONFIG_MONGODB_SERVER: mongodb
+      ME_CONFIG_MONGODB_SERVER: ${MONGO_HOST}
       ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_ROOT_USER}
       ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_ROOT_PASSWORD}
       ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_EXPRESS_LOGIN}
       ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_EXPRESS_PASSWORD}
 
   server:
-    container_name: server
+    container_name: server-hotel
     restart: always
     build: 
       context: ./backend
       dockerfile: Dockerfile.dev
+    env_file:
+      - .env
     volumes:
-      - ./backend:/backend
-      - /backend/node_modules
-    ports:
-      - 3000:${BACKEND_PORT}
+      - ./backend:/backend #для разработки
     depends_on:
       - mongo
     command: npm run start:dev
 
   client:
-    container_name: client
+    container_name: client-hotel
     restart: always
     build: 
       context: ./frontend
       dockerfile:  Dockerfile.dev
     volumes: 
-      - ./frontend:/frontend
-      - /frontend/node_modules
-    ports:
-      - 5173:${FRONTEND_PORT}
+     - ./frontend:/frontend # для разработки
+     - /frontend/node_modules # для разработки
     depends_on:
       -  server
     command: npm run dev
 
+  nginx:
+    container_name: nginx-hotel
+    depends_on:
+      - client
+      - server
+    restart: always
+    build:
+      dockerfile: Dockerfile
+      context: ./nginx
+    ports:
+      - '80:80'
 volumes:
   data-base: {}
