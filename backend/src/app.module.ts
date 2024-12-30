@@ -1,45 +1,26 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
-import { DatabaseService } from './database.service';
+import { DatabaseService } from './db/database.service';
+import { ConnectModule } from './db/connect.module';
 
+/**
+ * Главный модуль подключения приложения
+ * 
+ * Этот модуль инициализирует приложение, подключает конфигурационные модули,
+ * модуль подключения к базе данных и предоставляет основные сервисы.
+ * 
+ * @module AppModule
+ */
 @Module({
   imports: [
-    ConfigModule.forRoot(),
-    MongooseModule.forRoot(
-      `mongodb://mongo:27017/${process.env.MONGO_DB_NAME}`,
-      {
-        user: process.env.MONGO_HOTELS_WRITE_USER,
-        pass: process.env.MONGO_HOTELS_WRITE_PASSWORD,
-        connectionFactory: (connection) => {
-          // Проверяем состояние соединения
-          if (connection.readyState === 1) {
-            console.log(
-              `✅ Connected to MongoDB: ${connection.db.databaseName}`,
-            );
-          } else {
-            console.warn('⚠️ MongoDB connection is not ready');
-          }
-
-          // Подписываемся на события
-          connection.on('connected', () => {
-            console.log(
-              `✅ Connected to MongoDB: ${connection.db.databaseName}`,
-            );
-          });
-          connection.on('error', (err) => {
-            console.error('❌ MongoDB connection error:', err);
-          });
-          connection.on('disconnected', () => {
-            console.warn('⚠️ MongoDB disconnected');
-          });
-
-          return connection;
-        },
-      },
-    ),
+    // загружает переменные из .env, подключен глобально
+    ConfigModule.forRoot({
+      isGlobal: true 
+    }),
+    // модуль подключения к базе данных
+    ConnectModule,
   ],
   controllers: [AppController],
   providers: [AppService, DatabaseService],
