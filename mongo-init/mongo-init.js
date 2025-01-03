@@ -20,7 +20,7 @@ db.createRole(
     role: "hotels-db",
     privileges: [
       {
-        resource: { db: "hotels-db", collection: "" },
+        resource: { db: "hotels-db", collection: "*" },
         actions: ["insert", "update", "find", "remove"],
       },
     ],
@@ -31,7 +31,7 @@ db.createRole(
 
 // Пользователь с правами на запись в hotels
 db.createUser({
-  user: "__MONGO_HOTELS_USER__",
-  pwd: "__MONGO_HOTELS_PASSWORD__",
+  user: "__MONGO_DB_USER__",
+  pwd: "__MONGO_DB_PASSWORD__",
   roles: [{ role: "hotels-db", db: "hotels-db" }],
 });

@@ -6,11 +6,12 @@ services:
     container_name: mongodb
     logging:
       options:
-        max-size: 1g
-        max-file: 5
+        max-size: 500mb
+        max-file: 4
     volumes:
       - ./data-base-hotel:/data/db
-    command: ["mongod", "--auth"]
+      - ./hotel-logs/mongo-logs:/var/log/mongodb
+    command: ["--auth"]
 
   mongo-express:
     image: mongo-express:latest
@@ -19,11 +20,13 @@ services:
     ports:
       - ${MONGO_EXPRESS_PORT}:8081
     environment:
-      ME_CONFIG_MONGODB_SERVER: ${MONGO_HOST}
       ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_ROOT_USER}
       ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_ROOT_PASSWORD}
       ME_CONFIG_BASICAUTH_USERNAME: ${MONGO_EXPRESS_LOGIN}
       ME_CONFIG_BASICAUTH_PASSWORD: ${MONGO_EXPRESS_PASSWORD}
+      ME_CONFIG_MONGODB_SERVER: mongodb
+    depends_on:
+      - mongo
 
   server:
     container_name: server-hotel
@@ -35,6 +38,10 @@ services:
       - .env
     volumes:
       - ./backend:/backend #для разработки
+    logging:
+      options:
+        max-size: 500mb
+        max-file: 4
     depends_on:
       - mongo
     command: npm run start:dev
@@ -48,6 +55,10 @@ services:
     volumes: 
      - ./frontend:/frontend # для разработки
      - /frontend/node_modules # для разработки
+    logging:
+      options:
+        max-size: 500mb
+        max-file: 4
     depends_on:
       -  server
     command: npm run dev
@@ -61,6 +72,8 @@ services:
     build:
       dockerfile: Dockerfile
       context: ./nginx
+    volumes:
+      - ./hotel-logs/nginx-logs:/var/log/nginx
     ports:
       - ${NGINX_PORT}:80
 volumes:

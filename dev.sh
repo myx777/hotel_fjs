@@ -18,7 +18,7 @@ fi
 echo "Waiting for MongoDB to finish initialization..."
 MAX_RETRIES=60
 RETRY_COUNT=0
-DELAY=5
+DELAY=1
 
 while ! docker exec mongodb mongosh --quiet --eval "db.adminCommand('ping')" >/dev/null 2>&1; do
     if [ "$RETRY_COUNT" -ge "$MAX_RETRIES" ]; then
@@ -29,7 +29,7 @@ while ! docker exec mongodb mongosh --quiet --eval "db.adminCommand('ping')" >/d
     RETRY_COUNT=$((RETRY_COUNT + 1))
     sleep $DELAY
 done
-
+sleep 5
 echo "MongoDB is initialized!"
 
 # Проверяем наличие файла .env
@@ -68,19 +68,22 @@ sed -e "s/__MONGO_ROOT_USER__/${MONGO_ROOT_USER}/g" \
 echo "Executing processed mongo-init.js..."
 docker exec -i mongodb mongosh < ${TEMP_FILE}
 
-# Удаляем временный файл
-rm -f ${TEMP_FILE} 
-
 # Удаляем временный файл после успешного выполнения
 echo "Removing processed temporary file..."
 rm -f ${TEMP_FILE}
 
-# Таймер, чтобы другие сервисы успели подключиться
-sleep 15
+# таймер
+TIMER=30
+while [ $TIMER -gt 0 ]; do
+    clear
+    echo "Wait $TIMER seconds for starting containers"
+    TIMER=$((TIMER - 1))
+    sleep 1
+done
 
 # Вывод логов
 echo "================ BACKEND LOGS ================"
-docker logs server-hotel | head -n 5 || echo "Error fetching logs for server."
+docker logs server-hotel | tail -n 10 || echo "Error fetching logs for server."
 echo "=============================================="
 
 echo "================ FRONTEND LOGS ================"
