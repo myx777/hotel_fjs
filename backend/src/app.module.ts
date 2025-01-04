@@ -4,7 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseService } from './db/database.service';
 import { ConnectModule } from './db/connect.module';
-import { UsersModule } from './db/users/users.module';
+import { UsersModule } from './db/user/users.module';
 
 /**
  * Главный модуль подключения приложения
