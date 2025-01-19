@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { ConfigModule } from '@nestjs/config';
 import { ConnectModule } from './db/connect.module';
-import { UsersModule } from './db/user/users.module';
+import { UsersModule } from './users/users.module';
 import { DbService } from './db/db.service';
 
 /**

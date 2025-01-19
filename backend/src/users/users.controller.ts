@@ -6,6 +6,7 @@ import { UserDocument } from './schema/user.schema';
 /**
  * Контролер юзеров
  *
+ * @method { Post ('/registration') } получает данные нового пользователя в формате JSON и сохраняет их в базе данных
  */
 @Controller('users')
 export class UsersController {

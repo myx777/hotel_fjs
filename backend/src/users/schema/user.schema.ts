@@ -3,7 +3,7 @@ import { HydratedDocument } from 'mongoose';
 
 /**
  * Тип документа пользователя в MongoDB.
- * 
+ *
  * @description Связывает класс `User` с методами и свойствами документа Mongoose.
  * Этот тип включает в себя свойства из схемы `User` и методы Mongoose, такие как `.save()` и `.update()`.
  */
@@ -14,7 +14,7 @@ export type UserDocument = HydratedDocument<User>;
  *
  * @description Эта схема описывает основные данные пользователя, включая email, хеш пароля, имя, телефон и роль.
  * @property {string} email - Уникальный адрес электронной почты пользователя.
- * @property {string} passwordHash - Хешированный пароль пользователя.
+ * @property {string} password - Объект с хэшированным паролем.
  * @property {string} name - Имя пользователя.
  * @property {string} contactPhone - Контактный номер телефона пользователя.
  * @property {string} role - Роль пользователя (client, admin, manager). По умолчанию `client`.
