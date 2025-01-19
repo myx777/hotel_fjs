@@ -1,4 +1,11 @@
-import { IsEmail, IsNotEmpty, Length, Matches } from 'class-validator';
+import { IsEmail, IsMobilePhone, IsNotEmpty, Length, Matches } from 'class-validator';
+
+/**
+ * DTO для создания пользователя.
+ * 
+ * @description Этот класс используется для валидации данных, необходимых для создания нового пользователя. 
+ * Поля проходят проверку с помощью декораторов `class-validator`.
+ */
 
 export class CreateUserDto {
   @IsEmail({}, { message: 'Некорректный email' })
@@ -12,11 +19,11 @@ export class CreateUserDto {
   @Length(8, 128, { message: 'Пароль должен быть от 8 до 128 знаков' })
   password: string;
 
-  @IsNotEmpty({ message: 'Имя обязателено' })
+  @IsNotEmpty({ message: 'Имя должно быть обязателено' })
+  @Length(2, 10, {message: 'Имя должно быть от 2 до 10 символов' })
   name: string;
 
-  @Length(10,10, {message: 'Номер телефона должен содержать 10 цифр'})
-  @Matches(/^\d{10}$/, {message: 'Не верно введен номер телефона!'})
+  @IsMobilePhone('ru-RU')
   contactPhone: string;
 
   @IsNotEmpty({ message: 'Роль должна быть обязателена' })

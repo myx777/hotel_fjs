@@ -3,7 +3,7 @@ import { InjectConnection } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
 
 @Injectable()
-export class DatabaseService {
+export class DbService {
   constructor(@InjectConnection() private readonly connection: Connection) {}
 
   async getConnectionStatus(): Promise<string> {

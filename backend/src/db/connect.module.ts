@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { DbController } from './db.controller';
 
 /**
  * Модуль для подключения к MongoDB
@@ -53,5 +54,6 @@ import { MongooseModule } from '@nestjs/mongoose';
       }),
     }),
   ],
+  controllers: [DbController],
 })
 export class ConnectModule {}

@@ -75,6 +75,6 @@ services:
     volumes:
       - ./hotel-logs/nginx-logs:/var/log/nginx
     ports:
-      - ${NGINX_PORT}:80
+      - 80:80
 volumes:
   data-base: {}

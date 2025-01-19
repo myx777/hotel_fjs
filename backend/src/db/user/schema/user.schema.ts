@@ -1,6 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 
+/**
+ * Тип документа пользователя в MongoDB.
+ * 
+ * @description Связывает класс `User` с методами и свойствами документа Mongoose.
+ * Этот тип включает в себя свойства из схемы `User` и методы Mongoose, такие как `.save()` и `.update()`.
+ */
 export type UserDocument = HydratedDocument<User>;
 
 /**

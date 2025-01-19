@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
-import { DatabaseService } from './db/database.service';
 import { ConnectModule } from './db/connect.module';
 import { UsersModule } from './db/user/users.module';
+import { DbService } from './db/db.service';
 
 /**
  * Главный модуль подключения приложения
@@ -22,9 +21,10 @@ import { UsersModule } from './db/user/users.module';
     }),
     // модуль подключения к базе данных
     ConnectModule,
+    // модуль пользователей
     UsersModule,
   ],
   controllers: [AppController],
-  providers: [AppService, DatabaseService],
+  providers: [DbService],
 })
 export class AppModule {}
