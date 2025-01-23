@@ -1,20 +1,18 @@
+import { SearchParam } from 'src/interfaces/searchParam.interface';
 import { User } from '../schema/user.schema';
+
 
 /**
  * Параметры для поиска пользователей.
  *
  * @description Используются для фильтрации списка пользователей при вызове метода `findAll`.
- * @property {number} limit - Максимальное количество записей, которые нужно вернуть.
- * @property {number} offset - Количество записей, которые нужно пропустить (для пагинации).
- * @property {string} [email] - Частичное совпадение email пользователя.
- * @property {string} [name] - Частичное совпадение имени пользователя.
- * @property {string} [contactPhone] - Частичное совпадение контактного телефона пользователя.
+ * @property {string} [email] - Частичное совпадение email пользователя (опционально).
+ * @property {string} [name] - Частичное совпадение имени пользователя (опционально).
+ * @property {string} [contactPhone] - Частичное совпадение контактного телефона пользователя (опционально).
  */
-export interface SearchUserParams {
-  limit: number;
-  offset: number;
-  email: string;
-  name: string;
+export interface SearchUserParams extends SearchParam {
+  email?: string;
+  name?: string;
   contactPhone?: string;
 }
 

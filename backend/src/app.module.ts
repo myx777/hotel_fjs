@@ -4,6 +4,8 @@ import { ConfigModule } from '@nestjs/config';
 import { ConnectModule } from './db/connect.module';
 import { UsersModule } from './users/users.module';
 import { DbService } from './db/db.service';
+import { HotelController } from './hotel/hotel.controller';
+import { HotelsModule } from './hotels/hotels.module';
 
 /**
  * Главный модуль подключения приложения
@@ -23,8 +25,9 @@ import { DbService } from './db/db.service';
     ConnectModule,
     // модуль пользователей
     UsersModule,
+    HotelsModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, HotelController],
   providers: [DbService],
 })
 export class AppModule {}
