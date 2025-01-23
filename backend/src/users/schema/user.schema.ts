@@ -40,7 +40,7 @@ export class User {
   @Prop({ required: true })
   name: string;
 
-  @Prop({ required: true })
+  @Prop()
   contactPhone: string;
 
   @Prop({

@@ -1,4 +1,5 @@
-import { IsEmail, IsMobilePhone, IsNotEmpty, Length, Matches } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsEmail, IsMobilePhone, IsNotEmpty, IsOptional, Length, Matches } from 'class-validator';
 
 /**
  * DTO для создания пользователя.
@@ -23,6 +24,7 @@ export class CreateUserDto {
   @Length(2, 10, {message: 'Имя должно быть от 2 до 10 символов' })
   name: string;
 
+  @IsOptional()
   @IsMobilePhone('ru-RU')
   contactPhone: string;
 
