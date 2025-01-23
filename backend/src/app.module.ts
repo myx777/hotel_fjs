@@ -6,6 +6,8 @@ import { UsersModule } from './users/users.module';
 import { DbService } from './db/db.service';
 import { HotelController } from './hotel/hotel.controller';
 import { HotelsModule } from './hotels/hotels.module';
+import { ReservationService } from './reservation/reservation.service';
+import { ReservationModule } from './reservation/reservation.module';
 
 /**
  * Главный модуль подключения приложения
@@ -26,8 +28,9 @@ import { HotelsModule } from './hotels/hotels.module';
     // модуль пользователей
     UsersModule,
     HotelsModule,
+    ReservationModule,
   ],
   controllers: [AppController, HotelController],
-  providers: [DbService],
+  providers: [DbService, ReservationService],
 })
 export class AppModule {}

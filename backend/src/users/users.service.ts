@@ -4,15 +4,19 @@ import { Model } from 'mongoose';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { passwordHashed } from './middleware/password';
+import {
+  IUserService,
+  SearchUserParams,
+} from './interfaces/user-service.interface';
 
 /**
  * Сервис для работы с пользователями
  * @method { create } - создание пользователя на основе приходящих данных в соответсвии с CreateUserDto и хеширование пароля
- * 
+ *
  * @method { findByEmail } - поиск пользователя по email
  */
 @Injectable()
-export class UsersService {
+export class UsersService implements IUserService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
   ) {}
@@ -40,7 +44,7 @@ export class UsersService {
     }
   }
   /**
-   * 
+   *
    * @param email - email пользователя
    * @returns - пользователь либо null
    */
@@ -50,5 +54,11 @@ export class UsersService {
       return null;
     }
     return user;
+  }
+  async findById(id: string | null): Promise<User> {
+    return;
+  }
+  async findAll(params: SearchUserParams): Promise<User[]> {
+    return;
   }
 }
