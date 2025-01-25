@@ -4,10 +4,11 @@ import { ConfigModule } from '@nestjs/config';
 import { ConnectModule } from './db/connect.module';
 import { UsersModule } from './users/users.module';
 import { DbService } from './db/db.service';
-import { HotelController } from './hotel/hotel.controller';
 import { HotelsModule } from './hotels/hotels.module';
 import { ReservationService } from './reservation/reservation.service';
 import { ReservationModule } from './reservation/reservation.module';
+import { HotelsController } from './hotels/hotels.controller';
+import { SupportRequestModule } from './support-request/support-request.module';
 
 /**
  * Главный модуль подключения приложения
@@ -29,8 +30,9 @@ import { ReservationModule } from './reservation/reservation.module';
     UsersModule,
     HotelsModule,
     ReservationModule,
+    SupportRequestModule,
   ],
-  controllers: [AppController, HotelController],
+  controllers: [AppController, HotelsController],
   providers: [DbService, ReservationService],
 })
 export class AppModule {}
