@@ -1,5 +1,5 @@
-import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { HydratedDocument, Types } from "mongoose";
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 /**
  * Тип документа отеля в MongoDB.
  *
@@ -11,7 +11,7 @@ export type HotelDocument = HydratedDocument<Hotel>;
  * Схема данных пользователя в MongoDB.
  *
  * @description Эта схема описывает основные данные пользователя, включая email, хеш пароля, имя, телефон и роль.
- * @property {Types.ObjectId} title 
+ * @property {Types.ObjectId} title
  * @property {string} description - Описание отеля
  */
 

@@ -1,5 +1,5 @@
-import { IsNotEmpty, IsString, IsDate } from "class-validator";
-import { Type } from "class-transformer";
+import { IsNotEmpty, IsString, IsDate } from 'class-validator';
+import { Type } from 'class-transformer';
 
 /**
  * DTO для отметки сообщений как прочитанных.
@@ -20,6 +20,6 @@ export class MarkMessagesAsReadDto {
 
   @IsNotEmpty()
   @IsDate()
-  @Type(() => Date) 
+  @Type(() => Date)
   createdBefore: Date;
 }

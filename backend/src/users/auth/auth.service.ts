@@ -16,7 +16,7 @@ export class AuthService {
   ) {}
 
   /**
-   * 
+   *
    * @param email - email пользователя
    * @param password - пароль пользователя
    * @returns JWT токен
@@ -30,13 +30,15 @@ export class AuthService {
     try {
       const user = await this.userService.findByEmail(email);
       if (!user) {
-        throw new HttpException('Пользователь не найден', HttpStatus.BAD_REQUEST);
+        throw new HttpException(
+          'Пользователь не найден',
+          HttpStatus.BAD_REQUEST,
+        );
       }
 
-        return;
+      return;
     } catch (error) {
-        throw console.log(`Ошибка формирования JWT ${error.message}`);
+      throw console.log(`Ошибка формирования JWT ${error.message}`);
     }
-    
   }
 }

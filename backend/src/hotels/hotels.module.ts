@@ -13,8 +13,13 @@ import { HotelRoom, HotelRoomSchema } from './schema/HotelRoom.schema';
  */
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Hotel.name, schema: HotelSchema }, {name: HotelRoom.name, schema: HotelRoomSchema}])],
+  imports: [
+    MongooseModule.forFeature([
+      { name: Hotel.name, schema: HotelSchema },
+      { name: HotelRoom.name, schema: HotelRoomSchema },
+    ]),
+  ],
   providers: [HotelsService],
-  controllers: [HotelsController]
+  controllers: [HotelsController],
 })
 export class HotelsModule {}

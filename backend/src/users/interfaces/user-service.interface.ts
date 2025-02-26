@@ -1,7 +1,6 @@
 import { SearchParam } from 'src/interfaces/searchParam.interface';
 import { User } from '../schema/user.schema';
 
-
 /**
  * Параметры для поиска пользователей.
  *

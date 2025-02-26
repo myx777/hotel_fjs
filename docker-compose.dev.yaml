@@ -1,5 +1,4 @@
 services:
-
   mongo:
     image: mongo:latest
     restart: always
@@ -31,7 +30,7 @@ services:
   server:
     container_name: server-hotel
     restart: always
-    build: 
+    build:
       context: ./backend
       dockerfile: Dockerfile.dev
     env_file:
@@ -49,18 +48,18 @@ services:
   client:
     container_name: client-hotel
     restart: always
-    build: 
+    build:
       context: ./frontend
-      dockerfile:  Dockerfile.dev
-    volumes: 
-     - ./frontend:/frontend # для разработки
-     - /frontend/node_modules # для разработки
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./frontend:/frontend # для разработки
+      - /frontend/node_modules # для разработки
     logging:
       options:
         max-size: 500mb
         max-file: 4
     depends_on:
-      -  server
+      - server
     command: npm run dev
 
   nginx:

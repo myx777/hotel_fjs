@@ -22,11 +22,11 @@ db.createRole(
       {
         resource: { db: "hotels-db", collection: "" },
         actions: ["insert", "update", "find", "remove"],
-      }
+      },
     ],
     roles: [],
   },
-  { w: "majority", wtimeout: 5000 }
+  { w: "majority", wtimeout: 5000 },
 );
 
 // Пользователь с правами на запись в hotels

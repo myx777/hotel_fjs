@@ -24,7 +24,7 @@ export async function passwordHashed(password: string): Promise<string> {
  * @param {string} password - Пароль, который необходимо проверить, на соответствие хэшированному паролю.
  * @param {string} hash - Хэш из бд
  * @returns {Promise<boolean>} Пароль соответствует хэшу или нет.
- * 
+ *
  */
 
 export async function passwordCheck(

@@ -9,7 +9,7 @@ async function bootstrap() {
   });
   // валидация всех данных
   app.useGlobalPipes(new ValidationPipe());
-  
+
   await app.listen(PORT);
 }
 

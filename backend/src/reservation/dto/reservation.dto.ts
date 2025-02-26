@@ -8,10 +8,10 @@ import {
 import { ReservationDateValidator } from '../middleware/ReservationDateValidator';
 /**
  * DTO для создания новой брони.
- * 
+ *
  * Этот класс используется для передачи данных при создании брони. Включает в себя валидацию данных для каждого поля.
  * Поля проходят проверку с помощью декораторов `class-validator`.
- * 
+ *
  * ReservationDateValidator используется для валидации даты.
  */
 export class CreateReservationDto {
