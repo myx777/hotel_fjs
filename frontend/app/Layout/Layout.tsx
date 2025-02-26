@@ -9,10 +9,10 @@ export default function Layout() {
       <div className="max-w-[1000px] mx-auto w-full flex flex-col flex-1">
         {/* ХЕДЕР */}
         <Header />
-        <div className="mt-5 mb-5 flex">
+        <div className="mt-5 mb-5 h-auto flex justify-between w-full">
           <Menu />
           {/* ОСНОВНОЙ КОНТЕНТ */}
-          <main className="flex-1">
+          <main className='max-w-[705px] flex-1'>
             <Outlet /> {/* Здесь будет меняться контент */}
           </main>
         </div>
