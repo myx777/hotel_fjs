@@ -1,0 +1,16 @@
+# Используем образ Node.js
+FROM node:23.5-alpine AS dev-env
+
+# Устанавливаем рабочую директорию
+WORKDIR /frontend
+
+# Копируем файлы зависимостей
+COPY package*.json ./
+
+# Устанавливаем зависимости с учетом разработки
+RUN npm install
+
+# Копируем весь исходный код
+COPY . .
+
+EXPOSE 5173

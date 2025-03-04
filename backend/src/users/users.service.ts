@@ -31,7 +31,7 @@ export class UsersService implements IUserService {
       });
       return createdUser;
     } catch (error) {
-      if (error.code === 11000) {
+      if (error.code === 1100) {
         throw new HttpException(
           'Пользователь с таким email уже существует',
           HttpStatus.CONFLICT,

@@ -1,15 +1,18 @@
-// Search.tsx
-import { useState } from 'react';
-import DatePicker, { registerLocale } from 'react-datepicker';
+import { useState, lazy, Suspense } from 'react';
+import { setDefaultLocale } from 'react-datepicker'; // Импорт setDefaultLocale
 import { Form, useActionData } from 'react-router';
 import 'react-datepicker/dist/react-datepicker.min.css';
 
 // Импорт локали
-import { ru } from 'date-fns/locale/ru';
+import { ru } from 'date-fns/locale';
 import Button from '~/Components/Button';
 import DateInput from '~/Components/DateInput';
-// Регистрируем русскую локаль под именем "ru"
-registerLocale('ru', ru);
+
+// Устанавливаем русскую локаль как локаль по умолчанию
+setDefaultLocale('ru');
+
+// Динамическая загрузка компонента DatePicker
+const DatePicker = lazy(() => import('react-datepicker'));
 
 export async function action({ request }: { request: Request }) {
   const formData = await request.formData();
@@ -48,22 +51,26 @@ export default function HomePage() {
 
         <div className="flex justify-between">
           {/* Поле для даты заезда */}
-          <DateInput
-            name="checkIn"
-            selected={checkIn}
-            onChange={(date) => setCheckIn(date)}
-            placeholder="Заезд"
-          />
+          <Suspense fallback={<div>Loading...</div>}>
+            <DatePicker
+              name="checkIn"
+              selected={checkIn}
+              onChange={(date: Date) => setCheckIn(date)}
+              placeholderText="Заезд"
+            />
+          </Suspense>
 
           <div>-</div>
 
           {/* Поле для даты выезда */}
-          <DateInput
-            name="checkOut"
-            selected={checkOut}
-            onChange={(date) => setCheckOut(date)}
-            placeholder="Выезд"
-          />
+          <Suspense fallback={<div>Loading...</div>}>
+            <DatePicker
+              name="checkOut"
+              selected={checkOut}
+              onChange={(date: Date) => setCheckOut(date)}
+              placeholderText="Выезд"
+            />
+          </Suspense>
         </div>
 
         <Button

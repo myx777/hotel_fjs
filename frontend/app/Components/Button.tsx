@@ -15,12 +15,14 @@ export default function Button({
   onClick,
   children,
   className = '',
+  disabled,
 }: ButtonProps) {
   return (
     <button
       type={type}
       onClick={onClick}
-      className={`bg-blue-600 text-white py-2 px-4 rounded ${className}`}
+      className={`bg-blue-600 text-white py-2 px-4 rounded cursor-pointer ${className}`}
+      disabled={disabled}
     >
       {children}
     </button>

@@ -9,6 +9,9 @@ import {
 
 import type { Route } from './+types/root'; // Импортируем типы маршрутов
 import './app.css'; // Подключаем стили
+import { Footer } from './Layout/Footer/Footer';
+import { Header } from './Layout/Header/Header';
+import { Menu } from './Layout/Menu/Menu';
 
 // подключение шрифтов
 export const links: Route.LinksFunction = () => [
@@ -23,31 +26,48 @@ export const links: Route.LinksFunction = () => [
     href: 'https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap',
   },
 ];
-
 // общий макет
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="ru">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <Meta /> {/* Вставляет мета-теги */}
-        <Links /> {/* Вставляет <link> теги */}
+        {/* Вставляет мета-теги */}
+        <Meta />
+        {/* Вставляет <link> теги */}
+        <Links />
       </head>
       <body>
-        {children} {/* Здесь будут рендериться маршруты */}
+        <div className="flex min-h-screen bg-gray-100">
+          <div className="max-w-[1000px] mx-auto w-full flex flex-col flex-1">
+            {/* ХЕДЕР */}
+            <Header />
+            <div className="mt-5 mb-5 h-auto flex justify-between w-full">
+              <Menu />
+              {/* ОСНОВНОЙ КОНТЕНТ */}
+              <main className="max-w-[705px] flex-1">
+                {/*Здесь будет меняться контент*/}
+                {children}
+              </main>
+            </div>
+            {/* ФУТЕР */}
+            <Footer />
+          </div>
+        </div>
         <ScrollRestoration /> {/* Восстанавливает прокрутку при переходах */}
         <Scripts /> {/* Вставляет <script> теги */}
       </body>
     </html>
   );
 }
+
 // рендеринг маршрутов
 export default function App() {
   return <Outlet />;
 }
 
-// обработка всех ошибки: 404 и др
+// ошибки
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   let message = 'Ошибка';
   let details = 'Произошла непредвиденная ошибка.';
