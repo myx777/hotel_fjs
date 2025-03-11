@@ -14,6 +14,9 @@ export class UsersController {
 
   @Post('/registration')
   create(@Body() body: CreateUserDto): Promise<UserDocument> {
+    console.log(body);
+    
     return this.usersService.create(body);
   }
+
 }

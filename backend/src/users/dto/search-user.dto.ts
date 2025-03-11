@@ -1,4 +1,4 @@
-import { IsEmail, IsMobilePhone } from 'class-validator';
+import { IsEmail, IsMobilePhone, IsString } from 'class-validator';
 
 export class SearchUserDto {
   limit: number;
@@ -8,7 +8,8 @@ export class SearchUserDto {
   @IsEmail({}, { message: `Некорректный email!` })
   email: string;
 
-  name: string;
+  @IsString()
+  name?: string;
 
   @IsMobilePhone('ru-RU')
   contactPhone: string;

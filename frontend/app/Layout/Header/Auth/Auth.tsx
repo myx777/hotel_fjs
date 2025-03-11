@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LogIn } from './LogIn/LogIn';
+import { AuthModal } from './AuthModal/AuthModal';
 
 export function Auth() {
   const [isOpen, setIsOpen] = useState(false);
@@ -29,7 +29,7 @@ export function Auth() {
           />
         </svg>
       </button>
-      {isOpen ? <LogIn /> : null}
+      {isOpen ? <AuthModal /> : null}
       {/* Контейнер для картинки с фиксированной шириной и высотой */}
       <div className="rounded-xl bg-gray-200 w-12 h-12 flex items-center justify-center">
         <img

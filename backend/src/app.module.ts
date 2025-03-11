@@ -9,6 +9,9 @@ import { ReservationService } from './reservation/reservation.service';
 import { ReservationModule } from './reservation/reservation.module';
 import { HotelsController } from './hotels/hotels.controller';
 import { SupportRequestModule } from './support-request/support-request.module';
+import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from './common/guard/roles.guard';
+import { AuthModule } from './auth/auth.module';
 
 /**
  * Главный модуль подключения приложения
@@ -31,8 +34,16 @@ import { SupportRequestModule } from './support-request/support-request.module';
     HotelsModule,
     ReservationModule,
     SupportRequestModule,
+    AuthModule,
   ],
   controllers: [AppController, HotelsController],
-  providers: [DbService, ReservationService],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
+    DbService,
+    ReservationService,
+  ],
 })
 export class AppModule {}

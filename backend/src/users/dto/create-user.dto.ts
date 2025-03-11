@@ -1,11 +1,13 @@
 import {
   IsEmail,
+  IsEnum,
   IsMobilePhone,
   IsNotEmpty,
   IsOptional,
   Length,
   Matches,
 } from 'class-validator';
+import { Role } from 'src/common/roles';
 
 /**
  * DTO для создания пользователя.
@@ -35,6 +37,10 @@ export class CreateUserDto {
   @IsMobilePhone('ru-RU')
   contactPhone: string;
 
-  @IsNotEmpty({ message: 'Роль должна быть обязателена' })
-  role: string;
+   /**
+   * Роль пользователя (по умолчанию "user").
+   */
+   @IsEnum(Role, { message: 'Роль может быть только user, admin или moderator' })
+   @IsOptional()
+   role?: Role = Role.CLIENT;
 }

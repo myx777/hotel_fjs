@@ -41,6 +41,8 @@ services:
       options:
         max-size: 500mb
         max-file: 4
+    environment:
+      SESSION_SECRET: ${SESSION_SECRET}
     depends_on:
       - mongo
     command: npm run start:dev

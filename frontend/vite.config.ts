@@ -9,9 +9,17 @@ export default defineConfig({
     allowedHosts: ['client'],
     host: "0.0.0.0",
     port: 5173,
-    strictPort: true
+    strictPort: true,
+    proxy: {
+      "/api": {
+        target: `http://server:${process.env.BACKEND_PORT || 3000}`,
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
   },
-  build: {
-    target: 'esnext',
-  },
+  // build: {
+  //   target: 'esnext',
+  // },
 });

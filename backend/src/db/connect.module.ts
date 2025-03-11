@@ -1,57 +1,57 @@
-import { Module } from '@nestjs/common';
+import { Module, Logger } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { DbController } from './db.controller';
+import { Connection, MongooseError } from 'mongoose';
 
 /**
  * Модуль для подключения к MongoDB
  *
- * Этот модуль обеспечивает подключение к базе данных MongoDB
- * с использованием параметров, указанных в переменных окружения.
- * Также он настраивает обработку событий соединения.
- *
- * @module ConnectModule
+ * Этот модуль обеспечивает подключение к MongoDB, используя
+ * параметры из переменных окружения.
  */
 @Module({
   imports: [
     MongooseModule.forRootAsync({
-      useFactory: async () => ({
-        uri: `${process.env.MONGO_DB_URI}${process.env.MONGO_DB_NAME}`, // Переопределяем URI для тестов
-        user: process.env.MONGO_DB_USER,
-        pass: process.env.MONGO_DB_PASSWORD,
-        serverSelectionTimeoutMS: 5000,
-        connectionFactory: (connection) => {
-          // Проверяем начальное состояние соединения
-          if (connection.readyState === 1) {
-            console.log(
-              `✅ Connected to MongoDB: ${connection.db.databaseName}`,
-            );
-          } else {
-            console.warn('⚠️ MongoDB connection is not ready (initial state)');
-          }
+      useFactory: async () => {
+        const logger = new Logger('MongoDB');
+        const uri = `${process.env.MONGO_DB_URI}${process.env.MONGO_DB_NAME}`;
 
-          // Регистрируем обработчики событий
-          connection.on('connected', () => {
-            console.log('🔗 Event: connected');
-            console.log(
-              `✅ Connected to MongoDB: ${connection.db.databaseName}`,
-            );
-          });
+        logger.log(`🔗 Подключение к MongoDB: ${uri}`);
 
-          connection.on('error', (err) => {
-            console.error('❌ Event: MongoDB connection error:', err);
-          });
+        return {
+          uri,
+          user: process.env.MONGO_DB_USER,
+          pass: process.env.MONGO_DB_PASSWORD,
+          serverSelectionTimeoutMS: 5000,
+          connectionFactory: (connection: Connection) => {
+            // Проверяем начальное состояние соединения
+            if (connection.readyState === 1) {
+              logger.log(`✅ Подключено к MongoDB: ${connection.db.databaseName}`);
+            } else {
+              logger.warn('⚠️ MongoDB не готов (начальное состояние)');
+            }
 
-          connection.on('disconnected', () => {
-            console.warn('⚠️ Event: MongoDB disconnected');
-          });
+            // Регистрируем обработчики событий
+            connection.on('connected', () => {
+              logger.log(`✅ Подключено к MongoDB: ${connection.db.databaseName}`);
+            });
 
-          connection.on('reconnected', () => {
-            console.log('🔄 Event: MongoDB reconnected');
-          });
+            connection.on('error', (err: MongooseError) => {
+              logger.error('❌ Ошибка подключения к MongoDB:', err);
+            });
 
-          return connection;
-        },
-      }),
+            connection.on('disconnected', () => {
+              logger.warn('⚠️ MongoDB отключено');
+            });
+
+            connection.on('reconnected', () => {
+              logger.log('🔄 MongoDB переподключено');
+            });
+
+            return connection;
+          },
+        };
+      },
     }),
   ],
   controllers: [DbController],

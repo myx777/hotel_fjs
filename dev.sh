@@ -72,31 +72,31 @@ docker exec -i mongodb mongosh < ${TEMP_FILE}
 echo "Removing processed temporary file..."
 rm -f ${TEMP_FILE}
 
-# таймер
-TIMER=30
-while [ $TIMER -gt 0 ]; do
-    clear
-    echo "Wait $TIMER seconds for starting containers"
-    TIMER=$((TIMER - 1))
-    sleep 1
-done
+# # таймер
+# TIMER=30
+# while [ $TIMER -gt 0 ]; do
+#     clear
+#     echo "Wait $TIMER seconds for starting containers"
+#     TIMER=$((TIMER - 1))
+#     sleep 1
+# done
 
-# Вывод логов
-echo "================ BACKEND LOGS ================"
-docker logs server-hotel | tail -n 10 || echo "Error fetching logs for server."
-echo "=============================================="
+# # Вывод логов
+# echo "================ BACKEND LOGS ================"
+# docker logs server-hotel | tail -n 10 || echo "Error fetching logs for server."
+# echo "=============================================="
 
-echo "================ FRONTEND LOGS ================"
-docker logs client-hotel | head -n 5 || echo "Error fetching logs for client."
-echo "=============================================="
+# echo "================ FRONTEND LOGS ================"
+# docker logs client-hotel | head -n 5 || echo "Error fetching logs for client."
+# echo "=============================================="
 
-echo "================ MONGODB LOGS ================="
-docker logs mongodb | head -n 1 || echo "Error fetching logs for MongoDB."
-echo "=============================================="
+# echo "================ MONGODB LOGS ================="
+# docker logs mongodb | head -n 1 || echo "Error fetching logs for MongoDB."
+# echo "=============================================="
 
-echo "================ NGINX LOGS =================="
-docker logs nginx-hotel | head -n 1 || echo "Error fetching logs for nginx."
-echo "=============================================="
+# echo "================ NGINX LOGS =================="
+# docker logs nginx-hotel | head -n 1 || echo "Error fetching logs for nginx."
+# echo "=============================================="
 
-# Завершение
-echo "You are very cool!"
+# # Завершение
+# echo "You are very cool!"
