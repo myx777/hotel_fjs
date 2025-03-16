@@ -1,11 +1,23 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable, ForbiddenException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { Role } from '../roles';
+import { Request } from 'express';
 import { ROLES_KEY } from '../decorators/roles.decorator';
 
 /**
- * Guard для проверки доступа на основе ролей пользователя.
- * Используется в сочетании с декоратором `@Roles()` для ограничения доступа к определенным эндпоинтам.
+ * Guard для проверки ролей пользователя.
+ *
+ * Этот Guard используется совместно с декоратором `@Roles()`, чтобы ограничивать
+ * доступ к маршрутам в зависимости от роли пользователя.
+ *
+ * @example
+ * ```typescript
+ * @UseGuards(AuthGuard, RolesGuard)
+ * @Roles('admin')
+ * @Get('users')
+ * getAllUsers() {
+ *   return "Доступ разрешен только админам";
+ * }
+ * ```
  */
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -15,33 +27,38 @@ export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   /**
-   * Определяет, может ли текущий пользователь получить доступ к маршруту.
+   * Проверяет, может ли текущий пользователь получить доступ к запрашиваемому ресурсу.
    *
    * @param {ExecutionContext} context - Контекст выполнения запроса.
-   * @returns {boolean} - Возвращает `true`, если у пользователя есть необходимая роль, иначе `false`.
-   *
-   * @example
-   * ```typescript
-   * @UseGuards(RolesGuard)
-   * @Roles(Role.Admin)
-   * @Get('admin')
-   * getAdminData() {
-   *   return "Admin data";
-   * }
-   * ```
+   * @returns {boolean} - Возвращает `true`, если пользователь имеет нужную роль, иначе выбрасывает ошибку.
+   * @throws {ForbiddenException} - Если пользователь не аутентифицирован или не имеет доступа.
    */
   canActivate(context: ExecutionContext): boolean {
-    const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
+    // Получаем список требуемых ролей из декоратора @Roles()
+    const requiredRoles = this.reflector.getAllAndOverride<string[]>(ROLES_KEY, [
       context.getHandler(),
       context.getClass(),
     ]);
 
+    // Если роли не указаны, доступ открыт для всех
     if (!requiredRoles) {
-      return true; // Если роли не указаны, доступ разрешен
+      return true;
     }
 
-    const { user } = context.switchToHttp().getRequest();
+    // Получаем объект запроса
+    const request = context.switchToHttp().getRequest<Request>();
+    const user = request.session.user; // Данные пользователя хранятся в сессии
 
-    return requiredRoles.some((role) => user.roles?.includes(role));
+    // Если пользователь не аутентифицирован, выбрасываем ошибку
+    if (!user) {
+      throw new ForbiddenException('Необходима аутентификация');
+    }
+
+    // Если роль пользователя не входит в список разрешенных, выбрасываем ошибку
+    if (!requiredRoles.includes(user.role)) {
+      throw new ForbiddenException('Недостаточно прав');
+    }
+
+    return true;
   }
 }

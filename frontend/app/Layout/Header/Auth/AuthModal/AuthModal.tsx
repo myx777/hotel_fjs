@@ -61,7 +61,6 @@ export function AuthModal() {
     const formData = authVariable ? { name, email, password } : { email, password };
     const url = authVariable ? '/api/client/register' : '/api/auth/login';
     const method = 'POST';
-    console.log(formData);
     
     try {
       const response = await fetch(url, {

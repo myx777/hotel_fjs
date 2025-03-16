@@ -1,8 +1,16 @@
 #!/bin/bash
 
-# Останавливаю и удаляю контейнеры
-docker stop $(docker ps -a -q)
-docker rm $(docker ps -a -q)
+# Ищем контейнер MongoDB
+CONTAINER_ID=$(docker ps -f name=mongodb -q)
+
+if [ -n "$CONTAINER_ID" ]; then
+  echo "Останавливаем и удаляем существующий контейнер MongoDB..."
+  docker stop "$CONTAINER_ID"
+  docker rm "$CONTAINER_ID"
+else
+  echo "Контейнер MongoDB не найден. Пропускаем stop/rm."
+fi
+
 rm -rf data-base-hotel
 
 # Запуск Docker Compose
